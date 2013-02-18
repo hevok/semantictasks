@@ -1,0 +1,56 @@
+<!DOCTYPE html>  <html> <head>   <title>websockets.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="chat.html">                 chat.coffee               </a>                                           <a class="source" href="mock.html">                 mock.coffee               </a>                                           <a class="source" href="websockets.html">                 websockets.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               websockets.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>will be completely rewritten soon</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">websocket</span>
+  <span class="nv">init: </span><span class="nf">(url,username)-&gt;</span>
+    <span class="nv">chatSocket = </span><span class="k">if</span><span class="p">(</span><span class="nb">window</span><span class="p">[</span><span class="s">&#39;MozWebSocket&#39;</span><span class="p">])</span> <span class="k">then</span> <span class="k">new</span> <span class="nx">MozWebSocket</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="k">else</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">talk&quot;</span><span class="p">).</span><span class="nx">keypress</span><span class="p">(</span><span class="nx">handleReturnKey</span><span class="p">(</span><span class="nx">chatSocket</span><span class="p">))</span>
+    <span class="nv">chatSocket.onmessage = </span><span class="nx">receiveEvent</span><span class="p">(</span><span class="nx">chatSocket</span><span class="p">)</span>
+
+  <span class="nv">sendMessage = </span><span class="nf">(chatSocket)-&gt;</span>
+    <span class="nv">message =</span>
+      <span class="nv">text: </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">talk&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+    <span class="nv">str = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+    <span class="nx">chatSocket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">talk&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+
+  <span class="nv">createMessage = </span><span class="nf">(data)-&gt;</span>
+    <span class="nv">el = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;&lt;div class=&quot;message&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt;&#39;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;span&quot;</span><span class="p">,</span> <span class="nx">el</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;p&quot;</span><span class="p">,</span> <span class="nx">el</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">el</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">kind</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">user</span> <span class="o">==</span> <span class="nx">username</span><span class="p">)</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">el</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;me&#39;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#messages&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">el</span><span class="p">)</span>
+
+  <span class="nv">updateMembersList = </span><span class="nf">(data)-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">members&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="nv">append = </span><span class="p">()</span><span class="nf">-&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">members&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s">&#39;&lt;li&gt;&#39;</span> <span class="o">+</span> <span class="k">this</span> <span class="o">+</span> <span class="s">&#39;&lt;/li&gt;&#39;</span><span class="p">)</span>
+    <span class="nx">$</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">members</span><span class="p">).</span><span class="nx">each</span> <span class="nx">append</span>
+
+  <span class="nv">handleErrors = </span><span class="nf">(chatsocket,data)-&gt;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span>
+      <span class="nx">chatSocket</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">onError span&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">error</span><span class="p">)</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">onError&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+    <span class="k">else</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">onChat&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+
+  <span class="nv">receiveEvent = </span><span class="nf">(chatSocket) -&gt;</span>
+    <span class="nf">(event)-&gt;</span>
+      <span class="nv">data = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+      <span class="nx">handleErrors</span><span class="p">(</span><span class="nx">chatSocket</span><span class="p">,</span><span class="nx">data</span><span class="p">)</span>
+      <span class="nx">createMessage</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+      <span class="nx">updateMembersList</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+
+  <span class="nv">handleReturnKey = </span><span class="nf">(chatSocket)-&gt;</span>
+    <span class="nf">(e)-&gt;</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">charCode</span> <span class="o">==</span> <span class="mi">13</span> <span class="o">or</span> <span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span>
+        <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+        <span class="nx">sendMessage</span><span class="p">(</span><span class="nx">chatSocket</span><span class="p">)</span>
+
+
+
+<span class="nv">chat = </span><span class="k">new</span> <span class="nx">websocket</span>
+<span class="nx">chat</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="nx">username</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

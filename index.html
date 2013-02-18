@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Learn Batman!</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <link rel="stylesheet" href="resources/css/tasks.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/app.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/messages.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/users.css" type="text/css">
+
+    <script src="./lib/es5-shim.js"></script>
+    <script src="./lib/batman.js"></script>
+    <script src="./lib/batman.solo.js"></script>
+    <script src="./js/chat.js"></script>
+    <script src="./js/models.js"></script>
+    <script src="./js/views.js"></script>
+    <script src="./js/controllers.js"></script>
+    <script src="./js/mock.js"></script>
+
+
+
+</head>
+<body>
+<section class="dashboard" id="taskboard">
+    <header class="header">
+        <h1>Task list</h1>
+    </header>
+
+    <section class="board" data-showif="Task.all.length">
+        <ul>
+            <li data-foreach-task="Task.all"
+                data-addclass-completed="task.completed"
+                data-addclass-editing="task.editing">
+                <div  data-view="TaskView">
+                    <input type="checkbox" data-bind="task.completed" />
+                    <label data-bind="task.title"  data-event-click="click"></label>
+                    <Button data-event-click="click">X</Button>
+                </div>
+            </li>
+       </ul>
+    </section>
+</section>
+<section class="dashboard" id="messageboard">
+
+    <header class="header">
+        <h1>Messages list</h1>
+    </header>
+    <section class="board"  data-showif="Message.all.length">
+        <div class="message" data-foreach-message="Message.all">
+            <div data-view="MessageView">
+                <title data-bind="message.user"></title>
+                <p data-bind="message.text"></p>
+            </div>
+        </div>
+    </section>
+</section>
+<section class="dashboard" id="userboard">
+    <header class="header">
+        <h1>Users list</h1>
+    </header>
+    <section class="board"  data-showif="User.all.length">
+            <div class="user" data-foreach-user="User.all">
+                <div data-view="UserView">
+                    <label data-bind="user.name"></label>
+                </div>
+            </div>
+    </section>
+</section>
+
+</body>
+</html>
