@@ -1,6 +1,6 @@
 #will be completely rewritten soon
 
-class websocket
+class Socket
   init: (url,username)->
     chatSocket = if(window['MozWebSocket']) then new MozWebSocket(url) else new WebSocket(url)
     $("#talk").keypress(handleReturnKey(chatSocket))
