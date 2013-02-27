@@ -6,6 +6,9 @@ class Chat.TasksController extends Batman.Controller
     super
     @set 'newTask', new Chat.Task(completed: false)
 
+  items:->
+    Task.get('all')
+
   #get all of the tasks
   all: ->
     @set 'currentTasks', Chat.Task.get('all')

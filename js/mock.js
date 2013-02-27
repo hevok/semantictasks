@@ -10,71 +10,206 @@
     __extends(MockData, _super);
 
     function MockData() {
+      this.cleanUp = __bind(this.cleanUp, this);
+
+      this.kill = __bind(this.kill, this);
+
+      this.completeTasksByTitle = __bind(this.completeTasksByTitle, this);
+
+      this.completeTasksByOwner = __bind(this.completeTasksByOwner, this);
+
+      this.generate = __bind(this.generate, this);
+
+      this.randomInt = __bind(this.randomInt, this);
+
       this.createUsers = __bind(this.createUsers, this);
+
+      this.createMessages = __bind(this.createMessages, this);
+
+      this.createTasks = __bind(this.createTasks, this);
       return MockData.__super__.constructor.apply(this, arguments);
     }
 
-    MockData.prototype.createTasks = function() {
-      if (!Chat.Task.get('all').length) {
-        new Chat.Task({
-          title: 'Show this code to Daniel',
-          completed: true
-        }).save();
-        new Chat.Task({
-          title: 'Integrate with semantic chat application',
-          completed: false
-        }).save();
-        return new Chat.Task({
-          title: 'Run this code in the browser',
-          completed: true
-        }).save();
+    MockData.prototype.showDaniel = 'Show this code to Daniel';
+
+    MockData.prototype.integrate = 'Integrate with semantic chat application';
+
+    MockData.prototype.runCode = 'Run this code in the browser';
+
+    MockData.prototype.createTasks = function(num) {
+      var json;
+      if (num == null) {
+        num = 1;
+      }
+      json = {
+        owner: 'Robot',
+        title: 'Tell them that I am alive',
+        completed: false
+      };
+      switch (num) {
+        case 1:
+          return new Chat.Task({
+            owner: "Anton",
+            title: this.showDaniel,
+            completed: false
+          }).save();
+        case 2:
+          return new Chat.Task({
+            owner: "Anton",
+            title: this.integrate,
+            completed: false
+          }).save();
+        case 3:
+          return new Chat.Task({
+            owner: "Daniel",
+            title: this.runCode,
+            completed: false
+          }).save();
+        case 4:
+          return Chat.Task.createFromJSON(json).save();
+        default:
+          this.createTasks(1);
+          this.createTasks(2);
+          this.createTasks(3);
+          return this.createTasks(4);
       }
     };
 
-    MockData.prototype.createMessages = function() {
-      if (!Chat.Message.get('all').length) {
-        new Chat.Message({
-          text: "Hi guys! Look at my code!",
-          user: "Anton"
-        }).save();
-        new Chat.Message({
-          text: "Wait a moment, I shall see",
-          user: "Daniel"
-        }).save();
-        return new Chat.Message({
-          text: "Comrades, it is not our primary focus, let's go and continue writing grant application!",
-          user: "coced"
-        }).save();
+    MockData.prototype.createMessages = function(num) {
+      var json;
+      if (num == null) {
+        num = 1;
+      }
+      json = {
+        text: 'I am still alive!',
+        user: "Robot"
+      };
+      switch (num) {
+        case 1:
+          return new Chat.Message({
+            text: "Hi guys! Look at my code!",
+            user: "Anton"
+          }).save();
+        case 2:
+          new Chat.Message({
+            text: "Wait a moment, I shall see",
+            user: "Daniel"
+          }).save();
+          this.completeTasksByTitle(this.runCode);
+          return this.completeTasksByTitle(this.showDaniel);
+        case 3:
+          return new Chat.Message({
+            text: "Comrades, it is not our primary focus, let's go and continue writing grant application!",
+            user: "coced"
+          }).save();
+        case 4:
+          Chat.Message.createFromJSON(json).save();
+          return this.completeTasksByOwner("Robot");
+        default:
+          this.createMessages(1);
+          this.createMessages(2);
+          this.createMessages(3);
+          return this.createMessages(4);
       }
     };
 
     MockData.prototype.createUsers = function() {
-      if (!Chat.User.get('all').length) {
-        new Chat.User({
-          name: "Anton",
-          status: "active"
-        }).save();
-        new Chat.User({
-          name: "Daniel",
-          status: "active"
-        }).save();
-        return new Chat.User({
-          name: "coced",
-          status: "active"
-        }).save();
+      new Chat.User({
+        name: "Anton",
+        status: "active"
+      }).save();
+      new Chat.User({
+        name: "Daniel",
+        status: "active"
+      }).save();
+      new Chat.User({
+        name: "coced",
+        status: "active"
+      }).save();
+      return new Chat.User({
+        name: "Robot",
+        status: "active"
+      }).save();
+    };
+
+    MockData.prototype.randomInt = function(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    MockData.prototype.generate = function() {
+      var num;
+      num = this.randomInt(1, 4);
+      switch (this.randomInt(1, 2)) {
+        case 1:
+          this.createTasks(num);
+          break;
+        case 2:
+          this.createMessages(num);
       }
+      return setTimeout(this.generate, 1500);
+    };
+
+    MockData.prototype.completeTasksByOwner = function(owner) {
+      var all, item, _i, _len, _results;
+      all = Chat.Task.get("all").toArray();
+      _results = [];
+      for (_i = 0, _len = all.length; _i < _len; _i++) {
+        item = all[_i];
+        if (item.get("owner") === owner && item.get("completed") === false) {
+          _results.push(item.set("completed", true));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    MockData.prototype.completeTasksByTitle = function(title) {
+      var all, item, _i, _len, _results;
+      all = Chat.Task.get("all").toArray();
+      _results = [];
+      for (_i = 0, _len = all.length; _i < _len; _i++) {
+        item = all[_i];
+        if (item.get("title") === title && item.get("completed") === false) {
+          _results.push(item.set("completed", true));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    MockData.prototype.kill = function(items) {
+      var arr, item, _i, _len, _results;
+      arr = items.toArray();
+      _results = [];
+      for (_i = 0, _len = arr.length; _i < _len; _i++) {
+        item = arr[_i];
+        _results.push(item.destroy());
+      }
+      return _results;
+    };
+
+    MockData.prototype.cleanUp = function() {
+      this.kill(Chat.Message.get("all"));
+      this.kill(Chat.User.get("all"));
+      return this.kill(Chat.Task.get("all"));
     };
 
     return MockData;
 
   })(Batman.Object);
 
-  mockData = new MockData;
+  mockData = new Chat.MockData;
+
+  mockData.cleanUp();
 
   mockData.createTasks();
 
   mockData.createMessages();
 
   mockData.createUsers();
+
+  mockData.generate();
 
 }).call(this);

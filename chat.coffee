@@ -10,7 +10,6 @@ class Chat extends Batman.App
 #stores to global container
 Batman.container.Chat = Chat
 
-
 #add listener to the window object to fire run when everything has been loaded
 window.addEventListener 'load', ->
   Chat.run()

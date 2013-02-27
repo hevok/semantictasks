@@ -8,9 +8,7 @@
     __extends(MessageView, _super);
 
     function MessageView() {
-      var node;
       MessageView.__super__.constructor.apply(this, arguments);
-      node = this.get("node");
     }
 
     return MessageView;
@@ -22,9 +20,7 @@
     __extends(UserView, _super);
 
     function UserView() {
-      var node;
       UserView.__super__.constructor.apply(this, arguments);
-      node = this.get("node");
     }
 
     return UserView;
@@ -36,9 +32,7 @@
     __extends(TaskView, _super);
 
     function TaskView() {
-      var node;
       TaskView.__super__.constructor.apply(this, arguments);
-      node = this.get("node");
     }
 
     return TaskView;

@@ -30,6 +30,10 @@
       }));
     }
 
+    TasksController.prototype.items = function() {
+      return Task.get('all');
+    };
+
     TasksController.prototype.all = function() {
       return this.set('currentTasks', Chat.Task.get('all'));
     };

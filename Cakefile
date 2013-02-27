@@ -24,6 +24,12 @@ app = "chat.coffee"
 #mock data file name
 mock = "mock.coffee"
 
+#path to our collaboration classes
+collab = path+"collab"
+#js file name to which the collab classes will be compiled
+collabFile = out+"collab.js"
+
+
 #path to models
 models = path+"models"
 #js file name to which the models will be compiled
@@ -64,6 +70,13 @@ makeDocs = ->
 
   #document coffees in root folder
   exec "docco #{path}/#{coffees}", (err, stdout, stderr) ->
+    #throws errors if there are any
+    throw err if err
+    #prints log
+    console.log stdout + stderr
+
+  #document collab
+  exec "docco #{collab}/#{coffees}", (err, stdout, stderr) ->
     #throws errors if there are any
     throw err if err
     #prints log
@@ -112,6 +125,14 @@ compile = ->
     throw err if err
     #prints log
     console.log stdout + stderr
+
+  #compiles and joins models in single js file
+  exec "coffee  --join #{collabFile} --compile --output #{out} #{collab}", (err, stdout, stderr) ->
+    #throws errors if there are any
+    throw err if err
+    #prints log
+    console.log stdout + stderr
+
 
   #compiles and joins models in single js file
   exec "coffee  --join #{modelsFile} --compile --output #{out} #{models}", (err, stdout, stderr) ->

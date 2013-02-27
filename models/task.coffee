@@ -2,7 +2,7 @@
 class Chat.Task extends Batman.Model
 
   #declares that properties title and completed will be saved when @save() is called
-  @encode 'title', 'completed'
+  @encode 'owner','title', 'completed'
 
   #tells that all data saved by @save() function will be stored in the Browser local storage
   @persist Batman.LocalStorage
@@ -21,7 +21,6 @@ class Chat.Task extends Batman.Model
   @classAccessor 'completed', ->
     #gets all tasks and than applies filter function
     @get('all').filter (task) -> task.get('completed')
-
 
   @wrapAccessor 'title', (core) ->
     set: (key, value) -> core.set.call(@, key, value?.trim())

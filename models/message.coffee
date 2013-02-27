@@ -9,7 +9,9 @@ class Chat.Message extends Batman.Model
 
 
   #messages are stored in browser local storage
-  @persist Batman.LocalStorage
+  #@persist Batman.LocalStorage
+  @persist Chat.SocketStorage
+
 
   #key for local (by the browser) storage
   @storageKey: 'messages'

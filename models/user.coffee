@@ -15,4 +15,3 @@ class Chat.User extends Batman.Model
 
 
 
-

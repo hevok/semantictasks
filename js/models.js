@@ -11,7 +11,7 @@
       return Task.__super__.constructor.apply(this, arguments);
     }
 
-    Task.encode('title', 'completed');
+    Task.encode('owner', 'title', 'completed');
 
     Task.persist(Batman.LocalStorage);
 
@@ -81,7 +81,7 @@
       presence: true
     });
 
-    Message.persist(Batman.LocalStorage);
+    Message.persist(Chat.SocketStorage);
 
     Message.storageKey = 'messages';
 
