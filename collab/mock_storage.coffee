@@ -2,7 +2,7 @@
 
 class Chat.MockStorage
   constructor: ->
-    return null if typeof window.localStorage is 'undefined'
+    #return null if typeof window.localStorage is 'undefined'
     @storage = localStorage
 
   getItem: (key)-> @storage.getItem key

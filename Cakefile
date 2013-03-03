@@ -10,47 +10,82 @@
 task 'explain', 'Explains what this cakefile does', ->
   console.log 'Ths cake compiles all models to models.js, the same for views and contollers'
 
+
+#child process variable
+{exec} = require 'child_process'
+
+execute = (str)->
+  exec str, (err, stdout, stderr) ->
+    #throws errors if there are any
+    throw err if err
+    #prints log
+    console.log stdout + stderr
+
 #VARIABLES
 #----------
 #path where to take files from
 path = "./"
 
-#output path where to store compiled js files
-out = path+"js/"
-
-#app main file name
-app = "chat.coffee"
-
-#mock data file name
-mock = "mock.coffee"
-
-#path to our collaboration classes
-collab = path+"collab"
-#js file name to which the collab classes will be compiled
-collabFile = out+"collab.js"
-
-
-#path to models
-models = path+"models"
-#js file name to which the models will be compiled
-modelsFile = out+"models.js"
-
-#path to views
-views = path+"views"
-
-#js file name to which the views will be compiled
-viewsFile = out+"views.js"
-
-#path to controllers
-controllers = path+"controllers"
-
-#js file name to which the controllers will be compiled
-controllersFile = out+"controllers.js"
-
 coffees = "*.coffee"
 
-#child process variable
-{exec} = require 'child_process'
+
+###BUILDER
+
+  helpful class for our biuild process
+  can compile and generate docs for itself
+###
+
+class Builder
+
+  @all: []
+
+  #assigns basic params
+
+  constructor: (@path, input, output)->
+    @input = @path+input
+    @output = @path+output
+    Builder.all.push(@)
+
+  compileStr:-> "coffee --compile --output #{@output} #{@input}"
+
+  #compiles and joins models in single js file
+  compile: -> execute @compileStr()
+
+class FolderBuilder extends Builder
+  constructor: (@path, input, output, fileName="")->
+    super(@path, input,output)
+    if fileName!="" then @fileName = @output+fileName else @fileName = ""
+   # FolderBuilder.all.push(@)
+
+  join: -> if @fileName != "" then  "--join #{@fileName}" else ""
+
+  compileStr:-> "coffee #{@join()} --compile --output #{@output} #{@input}"
+
+  #BUGGY!
+  makeDoco: -> execute("docco #{@input}/#{coffees}")
+
+
+appBuilder = new Builder(path,"chat.coffee","js/")
+collabBuilder = new FolderBuilder(path, "collab", "js/","collab.js")
+modelsBuilder = new FolderBuilder(path, "models", "js/", "models.js")
+viewsBuilder = new FolderBuilder(path, "views", "js/","views.js")
+controllersBuilder = new FolderBuilder(path, "controllers", "js/", "controllers.js")
+mockBuilder = new Builder(path,"mock.coffee","js/")
+
+#FUNCTIONS THAT ARE USED IN TASKS
+#---------
+#testing is described here http://net.tutsplus.com/tutorials/javascript-ajax/better-coffeescript-testing-with-mocha/
+test = ->
+  console.log "Testing started"
+  execute("mocha --compilers coffee:coffee-script")
+  console.log "Testing completed"
+
+
+compile = ->
+  console.log "Compilation started"
+  for builder in Builder.all
+    builder.compile()
+  console.log "Compilation completed"
 
 #generates docs for sources
 #for this command docco ( https://github.com/jashkenas/docco ) should be installed
@@ -58,111 +93,14 @@ coffees = "*.coffee"
 #pygments should also be installed
 #in Linux it can be installed by
 # sudo easy_install pygments
-makeDocs = ->
+makeDocos = ->
   console.log "Documentation generation started"
-
-  #documenting this Cakefile
-  exec "docco #{path}Cakefile", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #document coffees in root folder
-  exec "docco #{path}/#{coffees}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #document collab
-  exec "docco #{collab}/#{coffees}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #document models
-  exec "docco #{models}/#{coffees}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #document views
-  exec "docco #{views}/#{coffees}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #document controllers
-  exec "docco #{controllers}/#{coffees}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-
+  execute("docco #{path}#{coffees}")
+  for builder in FolderBuilder.all
+    if typeof builder is FolderBuilder then builder.makeDoco()
   console.log "Documentation generation completed"
 
-
-#FUNCTIONS THAT ARE USED IN TASKS
-#---------
-
-test = ->
-  console.log "Testing started"
-  console.log "nothing to test yet!"
-  console.log "Testing completed"
-
-
-compile = ->
-  console.log "Compilation started"
-
-  #compiles an app
-  exec "coffee  --compile --output #{out} #{app}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #compiles and joins models in single js file
-  exec "coffee  --join #{collabFile} --compile --output #{out} #{collab}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-
-  #compiles and joins models in single js file
-  exec "coffee  --join #{modelsFile} --compile --output #{out} #{models}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-  #compiles and joins views in single js file
-  exec "coffee  --join #{viewsFile} --compile --output #{out} #{views}", (err, stdout, stderr) ->
-    throw err if err
-    console.log stdout + stderr
-
-  #compiles and joins controllers in single js file
-  exec "coffee --join #{controllersFile}  --compile --output #{out} #{controllers}", (err, stdout, stderr) ->
-    throw err if err
-    console.log stdout + stderr
-
-  #compiles mockdata
-  exec "coffee  --compile --output #{out} #{mock}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
-
-
-  console.log "Compilation completed"
-
-
-
+#makeCoffeeDocs= ->
 
 
 
@@ -181,15 +119,17 @@ task 'test', 'Test coffescripts', ->
 
 #makes docs
 task 'make:docs', 'generates docs for sources', ->
- # makeDocs()
+  makeDocos()
+  #makeCoffeeDoc()
 
 #makes cleanup,compile and documenting
 task 'build', 'Builds project from src/*.coffee to lib/*.js', ->
   console.log "Build task started"
-
-  test()
   compile()
-  makeDocs()
+  makeDocos()
+  test()
+
+  #makeDocos()
   console.log "Build task completed"
 
 

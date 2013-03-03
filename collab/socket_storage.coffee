@@ -1,6 +1,6 @@
 class Chat.SocketStorage extends Batman.LocalStorage
   constructor: ->
-    return null if typeof window.localStorage is 'undefined'
+    #return null if typeof window.localStorage is 'undefined'
     super
     @storage = new Chat.MockStorage()
 
