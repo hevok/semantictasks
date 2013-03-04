@@ -8,6 +8,14 @@
 #child process variable
 {exec} = require 'child_process'
 
+
+execute = (str)->
+  exec str, (err, stdout, stderr) ->
+    #throws errors if there are any
+    throw err if err
+    #prints log
+    console.log stdout + stderr
+
 #path where to take files from
 path = "./"
 
@@ -32,19 +40,10 @@ jsFile = out + "test.js"
 
 compile = ->
   console.log "Compilation started"
-  #compiles and joins models in single js file
-  exec "coffee --join #{collabFile} --compile --output #{out} #{collab}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
 
-  #compiles an app
-  exec "coffee  --compile --output #{out} #{app}", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
+ # execute "coffee --join #{collabFile} --compile --output #{out} #{collab}"
+
+  execute "coffee  --compile --output #{out} #{app}"
 
   console.log "Compilation completed"
 
@@ -52,11 +51,8 @@ compile = ->
 test = ->
   console.log "Testing started"
   #testing is described here http://net.tutsplus.com/tutorials/javascript-ajax/better-coffeescript-testing-with-mocha/
-  exec "mocha --compilers coffee:coffee-script", (err, stdout, stderr) ->
-    #throws errors if there are any
-    throw err if err
-    #prints log
-    console.log stdout + stderr
+
+  execute "mocha --compilers coffee:coffee-script"
 
   console.log "Testing completed"
 

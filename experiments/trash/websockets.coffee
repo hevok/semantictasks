@@ -1,7 +1,7 @@
 #will be completely rewritten soon
 
 class Socket
-  init: (url,username)->
+  init: (url,username)=>
     chatSocket = if(window['MozWebSocket']) then new MozWebSocket(url) else new WebSocket(url)
     $("#talk").keypress(handleReturnKey(chatSocket))
     chatSocket.onmessage = receiveEvent(chatSocket)
@@ -14,7 +14,7 @@ class Socket
 
     $("#talk").val('')
 
-  createMessage = (data)->
+  createMessage = (data)=>
     el = $('<div class="message"><span></span><p></p></div>')
     $("span", el).text(data.user)
     $("p", el).text(data.message)
@@ -23,7 +23,7 @@ class Socket
       $(el).addClass('me')
     $('#messages').append(el)
 
-  updateMembersList = (data)->
+  updateMembersList = (data)=>
     $("#members").html('')
     append = ()->
       $("#members").append('<li>' + this + '</li>')

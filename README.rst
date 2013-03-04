@@ -35,7 +35,9 @@ Setting up SemanticTasks
     Go to http://nodejs.org and install it. Nodejs will be used here only for coffeescript compilation.
     If you are using Ubuntu/Mint it is recommented to build Nodejs from sources because Ubuntu's repository contains outdated version of nodejs. 
     NodeJS comes with npm package manager. You can use it from the console to install all others things that are needed.
+
     $ npm install -g coffee-script
+
     $ npm install -g cake 
 	
 	When you are done, install and activate NodeJs and coffeescript plugins in your favourite IDE.
@@ -45,7 +47,20 @@ Setting up SemanticTasks
 
 4. Prepare Environment::
 
-	We also need few other tools.
+	We also need few other tools. Mocha ( http://visionmedia.github.com/mocha/ ) and Chai ( http://chaijs.com/ ) for testing:
+
+	$ sudo npm install -g mocha
+
+	$ sudo npm install chai
+
+	Coffeedoc ( https://github.com/omarkhan/coffeedoc ) for documentation generation:
+
+	$ sudo npm install -g coffeedoc
+
+	If you like more simple documentation style you may use docco instead (several documentation options are supported in Cakefile):
+
+	$ sudo npm install -g docco
+
     
 5. Build the project::
 

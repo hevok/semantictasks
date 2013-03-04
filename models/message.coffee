@@ -1,4 +1,7 @@
+###
 #model for messages
+contains text and user fields
+###
 class Chat.Message extends Batman.Model
 
   #two fields to be stored: text and user

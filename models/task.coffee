@@ -1,4 +1,8 @@
+###
+
 #model for the task
+contains owner, title and completed of the task
+###
 class Chat.Task extends Batman.Model
 
   #declares that properties title and completed will be saved when @save() is called

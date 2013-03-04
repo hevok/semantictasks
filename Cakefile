@@ -1,10 +1,12 @@
-#CAKE FILE
-#----------
-#this files makes all coffescript building process
-#in order to run it you should have coffeescript and cake installed
-#it can be done by by npm package manager
-#npm install -g coffee-script
-#npm install -g cake
+###CAKE FILE
+This file is to build and test the project
+----------
+this files makes all coffescript building process
+in order to run it you should have coffeescript and cake installed
+it can be done by by npm package manager
+npm install -g coffee-script
+npm install -g cake
+###
 
 #a task to explain what this cakefile does, kind of hello world=)
 task 'explain', 'Explains what this cakefile does', ->
@@ -59,10 +61,14 @@ class FolderBuilder extends Builder
 
   join: -> if @fileName != "" then  "--join #{@fileName}" else ""
 
-  compileStr:-> "coffee #{@join()} --compile --output #{@output} #{@input}"
+  compileStr: => "coffee #{@join()} --compile --output #{@output} #{@input}"
 
   #BUGGY!
-  makeDoco: -> execute("docco #{@input}/#{coffees}")
+  makeDoco: => execute("docco #{@input}/#{coffees}")
+
+  makeCoffeeDoc: (renderer="html")=>
+    command = "coffeedoc --renderer #{renderer} #{@input}/#{coffees}"
+    execute command
 
 
 appBuilder = new Builder(path,"chat.coffee","js/")
@@ -77,7 +83,8 @@ mockBuilder = new Builder(path,"mock.coffee","js/")
 #testing is described here http://net.tutsplus.com/tutorials/javascript-ajax/better-coffeescript-testing-with-mocha/
 test = ->
   console.log "Testing started"
-  execute("mocha --compilers coffee:coffee-script")
+  #testing is described here http://net.tutsplus.com/tutorials/javascript-ajax/better-coffeescript-testing-with-mocha/
+  execute "mocha --compilers coffee:coffee-script --ignore-leaks"
   console.log "Testing completed"
 
 
@@ -93,11 +100,16 @@ compile = ->
 #pygments should also be installed
 #in Linux it can be installed by
 # sudo easy_install pygments
-makeDocos = ->
+makeDocs = ->
   console.log "Documentation generation started"
-  execute("docco #{path}#{coffees}")
+  #execute("docco #{path}#{coffees}")
+  execute "coffeedoc #{path}/#{coffees}"
   for builder in FolderBuilder.all
-    if typeof builder is FolderBuilder then builder.makeDoco()
+    if builder instanceof  FolderBuilder
+      builder.makeCoffeeDoc()
+      #builder.makeDoco()
+
+
   console.log "Documentation generation completed"
 
 #makeCoffeeDocs= ->
@@ -119,17 +131,15 @@ task 'test', 'Test coffescripts', ->
 
 #makes docs
 task 'make:docs', 'generates docs for sources', ->
-  makeDocos()
-  #makeCoffeeDoc()
+  makeDocs()
 
 #makes cleanup,compile and documenting
 task 'build', 'Builds project from src/*.coffee to lib/*.js', ->
   console.log "Build task started"
   compile()
-  makeDocos()
   test()
 
-  #makeDocos()
+  makeDocs()
   console.log "Build task completed"
 
 
