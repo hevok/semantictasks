@@ -51,11 +51,7 @@ Setting up SemanticTasks
 
 	$ sudo npm install -g mocha
 
-	$ sudo npm install chai
-
-	Rehab ( https://github.com/Vizir/rehab ) for better file joins (optional):
-
-	$sudo npm install -g rehab
+	$ sudo npm install -g chai
 
 
 
@@ -74,7 +70,10 @@ Setting up SemanticTasks
 
    $ cake build
 
-If you are using IntellijIDEA or similar you can set up cake as external tool and set the project directory (where the Cakefile is located) as working directory. Then you can open your run cofiguration and add this external tool to be exectuted before run/debug command, so everytime you push debug/run button all coffeescripts will be compiled, tests passes and docs generated.
+If you are using IntellijIDEA or similar you can set up Cake (it is situated in the same folder as coffee) as external tool and set the project directory (where the Cakefile is located) as working directory.
+Then you can open your run cofiguration and add this external tool to be exectuted before run/debug command, so everytime you push debug/run button all coffeescripts will be compiled, tests passes and docs generated.
+The file to run is chatdemo.html
+Generated javascripts files are gitingored so you have to build everything first (with Cake) to run it
 
 6. Change SemanticTasks::
 

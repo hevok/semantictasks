@@ -11,10 +11,12 @@ name=*
 
 #IDE Files
 
-docs/
 .idea/
 *.iml
 
+#GENERATED FILES
+docs/
+js/
 
 # Machine-Specific Settings:
 configuration
