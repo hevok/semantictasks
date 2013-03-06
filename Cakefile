@@ -114,13 +114,10 @@ compile = ->
 #in Linux it can be installed by
 # sudo easy_install pygments
 makeDocs = ->
-  consolne.log "Documentation generation started"
-  #execute("docco #{path}#{coffees}")
-  execute "coffeedoc #{path}/#{coffees}"
-  for builder in FolderBuilder.all
-    if builder instanceof  FolderBuilder
-      builder.makeCoffeeDoc()
-      #builder.makeDoco()
+  console.log "Documentation generation started"
+
+  renderer = "html"
+  execute "coffeedoc --renderer #{renderer} chat.coffee mock.coffee Cakefile collab controllers models views test"
 
 
   console.log "Documentation generation completed"
@@ -153,7 +150,8 @@ task 'build', 'Builds project from src/*.coffee to lib/*.js', ->
   #rehabcompile()
   test()
 
-  #makeDocs()
+  makeDocs()
+
   console.log "Build task completed"
 
 

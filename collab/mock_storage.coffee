@@ -2,8 +2,10 @@
 #_require channel.coffee
 #_require socket.coffee
 
-#nothing here there, it is just a localStorage wrapper
-
+###
+  nothing here there, it is just a temporal localStorage wrapper
+  that will be deleted when I move everything to socketstorage
+###
 class Batman.MockStorage
   constructor: ->
     #return null if typeof window.localStorage is 'undefined'

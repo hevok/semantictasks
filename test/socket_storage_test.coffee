@@ -9,32 +9,15 @@ require '../collab/channel.coffee'
 require '../collab/mock_socket.coffee'
 require '../collab/socket.coffee'
 
+###
+  There will be tests for SocketStorage
+###
+
+
 describe 'In socket storage we', ->
+  ###
+  Just a sample test to test if all is working well
+  ###
   it 'run test', ->
     truth = "aging kills"
     truth.should.equal "aging kills"
-
-    obj = new Batman.SocketEvent("1","2","push")
-    check = obj instanceof Batman.SocketEvent
-    console.log check
-
-    check = obj instanceof String
-    console.log check
-
-    v =
-      content: "content"
-      channel: "channel"
-      request: "request"
-
-
-    #check = v instanceof String
-    check = v instanceof Batman.SocketEvent
-    console.log check
-
-###
-  it 'test write', ->
-
-  it 'test read', ->
-
-  it 'test readall', ->
-###

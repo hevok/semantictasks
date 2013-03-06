@@ -53,7 +53,7 @@ Setting up SemanticTasks
 
 	$ sudo npm install chai
 
-	Rehab ( https://github.com/Vizir/rehab ) for better file joins:
+	Rehab ( https://github.com/Vizir/rehab ) for better file joins (optional):
 
 	$sudo npm install -g rehab
 

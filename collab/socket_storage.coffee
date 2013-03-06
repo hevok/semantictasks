@@ -3,6 +3,12 @@
 #_require ./socket.coffee
 #_require ./mock_storage.coffee
 
+###
+  #SocketStorage
+
+  This is a Socket storage adaptor needed to connect Batman's models to websocket
+  It has not been finished yet.
+###
 class Batman.SocketStorage extends Batman.StorageAdapter
   constructor: ->
     #return null if typeof window.localStorage is 'undefined'
@@ -11,26 +17,28 @@ class Batman.SocketStorage extends Batman.StorageAdapter
     @storage = new Batman.MockStorage()
 
   ###
-  subscribes a model to the channel
+    subscribes a model to the channel
   ###
   subscribe: (model,storageKey)=>
-    @channel = @socket.newChannel(storageKey)
-    @channel.onmessage = (event)=>
+    model.channel = @socket.newChannel(storageKey)
+    model.channel.onmessage = (event)=>
       all = model.get("all")
       all.add(event.content)
 
 
 
-  #override to make things working with new storage
-
+  ###
+    override to make things working with new storage
+  ###
   _forAllStorageEntries: (iterator) ->
     for i in [0...@storage.length()]
       key = @storage.key(i)
       iterator.call(@, key, @storage.getItem(key))
     true
 
-  #overrided readAll to add subscription
-
+  ###
+    overrided readAll to add subscription
+  ###
   readAll: @skipIfError (env, next) ->
     try
       arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
@@ -64,8 +72,6 @@ class Batman.SocketStorage extends Batman.StorageAdapter
     next()
 
   create: @skipIfError ({key, recordAttributes}, next) ->
-    console.log key
-    console.log recordAttributes
     if @storage.getItem(key)
       arguments[0].error = new @constructor.RecordExistsError
     else

@@ -1,4 +1,7 @@
-#this class creates some mock data to work with
+###
+   ##MockData
+  this class creates some mock data to work with
+###
 class Chat.MockData extends Batman.Object
   constructor: ->
     @socket = Batman.Socket.getInstance()
@@ -8,7 +11,8 @@ class Chat.MockData extends Batman.Object
   integrate : 'Integrate with semantic chat application'
   runCode : 'Run this code in the browser'
 
-#creates mock tasks
+  ###creates mock tasks
+  ###
   createTasks: (num = 1)=>
     #JSON test
     json =
@@ -29,7 +33,9 @@ class Chat.MockData extends Batman.Object
         @createTasks(4)
 
 
-  #creates mock messages
+  ###
+    creates mock messages
+  ###
   createMessages: (num = 1)=>
     json =
       text: 'I am still alive!'
@@ -70,10 +76,14 @@ class Chat.MockData extends Batman.Object
     new Chat.User(name: "coced", status:"active").save()
     new Chat.User(name: "Robot", status:"active").save()
 
-  #random int generating function
+  ###
+  random int generating function
+  ###
   randomInt: (min, max)=> Math.floor(Math.random() * (max - min + 1)) + min
 
-  #callback that generates mock data (one of two test objects each second)
+  ###
+    callback that generates mock data (one of two test objects each second)
+  ###
   generate: =>
     num = @randomInt(1,4)
     switch @randomInt(1,2)
@@ -81,6 +91,9 @@ class Chat.MockData extends Batman.Object
       when 2 then @createMessages(num)
     setTimeout(@generate, 1500)
 
+  ###
+    Completes all tasks that has this owner
+  ###
   completeTasksByOwner: (owner)=>
     all = Chat.Task.get("all").toArray()
     for item in all
@@ -89,6 +102,9 @@ class Chat.MockData extends Batman.Object
         #because set not only saves the value but also do a lot of other useful stuf (like views and binding updates)
         item.set "completed", true
 
+  ###
+    Completes all tasks that has this title
+  ###
   completeTasksByTitle: (title)=>
     all = Chat.Task.get("all").toArray()
     for item in all
@@ -97,7 +113,9 @@ class Chat.MockData extends Batman.Object
         #because set not only saves the value but also do a lot of other useful stuf (like views and binding updates)
         item.set "completed", true
 
-
+  ###
+    Deletes items from localStorage of HTML
+  ###
   kill : (items)=>
     arr = items.toArray()
     for item in arr
