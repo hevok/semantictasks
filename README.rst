@@ -1,6 +1,6 @@
-===============
+=============
 SemanticTasks
-===============
+=============
 
 SemanticTasks toghether with SemanticChat allow you to incorporate semantic operations into you taksmanagement.
 
@@ -22,32 +22,34 @@ LESS is natively supported by Chrome and some other browsers but the best way to
 
 
 Setting up SemanticTasks
-==================
+========================
 
 1. Git clone repository::
 
-    You can do it in your favourite git client or in console by typing:
+   You can do it in your favourite git client or in console by typing::
 
-    $ git clone https://github.com/antonkulaga/semantictasks.git
+       $ git clone https://github.com/antonkulaga/semantictasks.git
 
-3. Set up CoffeeScript, if you have not installed it yet, you need to::
+3. Set up CoffeeScript, if you have not installed it yet, you need to:
 
-    Go to http://nodejs.org and install it. Nodejs will be used here only for coffeescript compilation.
-    If you are using Ubuntu/Mint it is recommented to build Nodejs from sources because Ubuntu's repository contains outdated version of nodejs. 
-    NodeJS comes with npm package manager. You can use it from the console to install all others things that are needed.
+   Go to http://nodejs.org and install it. Nodejs will be used here only for coffeescript compilation.
+   If you are using Ubuntu/Mint it is recommented to build Nodejs from sources because Ubuntu's repository contains outdated version of nodejs. 
+   NodeJS comes with npm package manager. You can use it from the console to install all others things that are needed.
 
-    $ npm install -g coffee-script
+   ::
 
-    $ npm install -g cake 
+        $ npm install -g coffee-script
+
+        $ npm install -g cake 
 	
-	When you are done, install and activate NodeJs and coffeescript plugins in your favourite IDE.
-	
-	Installes CoffeeScript itself and Cake builder that will be used to build the sources (-g parameter means that it will be installed as global, so npm will write the PATH variable for it and you will be able to call it from the console)
+   When you are done, install and activate NodeJs and coffeescript plugins in your favourite IDE.
+
+   Installes CoffeeScript itself and Cake builder that will be used to build the sources (-g parameter means that it will be installed as global, so npm will write the PATH variable for it and you will be able to call it from the console)
 
 
-4. Prepare Environment::
+4. Prepare Environment:
 
-	We also need few other tools. Mocha ( http://visionmedia.github.com/mocha/ ) and Chai ( http://chaijs.com/ ) for testing:
+   We also need few other tools. Mocha ( http://visionmedia.github.com/mocha/ ) and Chai ( http://chaijs.com/ ) for testing::
 
 	$ sudo npm install -g mocha
 
@@ -55,25 +57,24 @@ Setting up SemanticTasks
 
 
 
-	Coffeedoc ( https://github.com/omarkhan/coffeedoc ) for documentation generation:
+   Coffeedoc ( https://github.com/omarkhan/coffeedoc ) for documentation generation::
 
 	$ sudo npm install -g coffeedoc
 
-	If you like more simple documentation style you may use docco instead (several documentation options are supported in Cakefile):
+   If you like more simple documentation style you may use docco instead (several documentation options are supported in Cakefile)::
 
 	$ sudo npm install -g docco
 
-    
-5. Build the project::
+5. Build the project:
 
-   In order to do this you should go to the project directory (where there is a file called Cakefile) and run:
+   In order to do this you should go to the project directory (where there is a file called Cakefile) and run::
 
-   $ cake build
+       $ cake build
 
 If you are using IntellijIDEA or similar you can set up Cake (it is situated in the same folder as coffee) as external tool and set the project directory (where the Cakefile is located) as working directory.
 Then you can open your run cofiguration and add this external tool to be exectuted before run/debug command, so everytime you push debug/run button all coffeescripts will be compiled, tests passes and docs generated.
 The file to run is chatdemo.html
-Generated javascripts files are gitingored so you have to build everything first (with Cake) to run it
+Generated javascripts files are gitignored so you have to build everything first (with Cake) to run it
 
 6. Change SemanticTasks::
 
