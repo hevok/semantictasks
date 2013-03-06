@@ -26,17 +26,17 @@ Setting up SemanticTasks
 
 1. Git clone repository::
 
-    You can do it in your favourite git client or in console by typing:
+   You can do it in your favourite git client or in console by typing:
 
     $ git clone https://github.com/antonkulaga/semantictasks.git
 
 3. Set up CoffeeScript, if you have not installed it yet, you need to:
 
-    Go to http://nodejs.org and install it. Nodejs will be used here only for coffeescript compilation.
-    If you are using Ubuntu/Mint it is recommented to build Nodejs from sources because Ubuntu's repository contains outdated version of nodejs. 
-    NodeJS comes with npm package manager. You can use it from the console to install all others things that are needed.
+   Go to http://nodejs.org and install it. Nodejs will be used here only for coffeescript compilation.
+   If you are using Ubuntu/Mint it is recommented to build Nodejs from sources because Ubuntu's repository contains outdated version of nodejs. 
+   NodeJS comes with npm package manager. You can use it from the console to install all others things that are needed.
 
-    ::
+   ::
 
         $ npm install -g coffee-script
 
@@ -49,7 +49,7 @@ Setting up SemanticTasks
 
 4. Prepare Environment:
 
-    We also need few other tools. Mocha ( http://visionmedia.github.com/mocha/ ) and Chai ( http://chaijs.com/ ) for testing::
+   We also need few other tools. Mocha ( http://visionmedia.github.com/mocha/ ) and Chai ( http://chaijs.com/ ) for testing::
 
 	$ sudo npm install -g mocha
 
@@ -65,7 +65,6 @@ Setting up SemanticTasks
 
 	$ sudo npm install -g docco
 
-    
 5. Build the project:
 
    In order to do this you should go to the project directory (where there is a file called Cakefile) and run::
