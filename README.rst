@@ -26,9 +26,9 @@ Setting up SemanticTasks
 
 1. Git clone repository::
 
-   You can do it in your favourite git client or in console by typing:
+   You can do it in your favourite git client or in console by typing::
 
-    $ git clone https://github.com/antonkulaga/semantictasks.git
+       $ git clone https://github.com/antonkulaga/semantictasks.git
 
 3. Set up CoffeeScript, if you have not installed it yet, you need to:
 
@@ -42,9 +42,9 @@ Setting up SemanticTasks
 
         $ npm install -g cake 
 	
-    When you are done, install and activate NodeJs and coffeescript plugins in your favourite IDE.
+   When you are done, install and activate NodeJs and coffeescript plugins in your favourite IDE.
 
-    Installes CoffeeScript itself and Cake builder that will be used to build the sources (-g parameter means that it will be installed as global, so npm will write the PATH variable for it and you will be able to call it from the console)
+   Installes CoffeeScript itself and Cake builder that will be used to build the sources (-g parameter means that it will be installed as global, so npm will write the PATH variable for it and you will be able to call it from the console)
 
 
 4. Prepare Environment:
@@ -57,11 +57,11 @@ Setting up SemanticTasks
 
 
 
-    Coffeedoc ( https://github.com/omarkhan/coffeedoc ) for documentation generation::
+   Coffeedoc ( https://github.com/omarkhan/coffeedoc ) for documentation generation::
 
 	$ sudo npm install -g coffeedoc
 
-    If you like more simple documentation style you may use docco instead (several documentation options are supported in Cakefile)::
+   If you like more simple documentation style you may use docco instead (several documentation options are supported in Cakefile)::
 
 	$ sudo npm install -g docco
 
