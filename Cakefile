@@ -16,11 +16,10 @@ task 'explain', 'Explains what this cakefile does', ->
 #child process variable
 {exec} = require 'child_process'
 
+
 execute = (str)->
   exec str, (err, stdout, stderr) ->
-    #throws errors if there are any
     throw err if err
-    #prints log
     console.log stdout + stderr
 
 #VARIABLES
@@ -29,6 +28,9 @@ execute = (str)->
 path = "./"
 
 coffees = "*.coffee"
+
+#use rehab for better file joints
+#Rehab = require 'rehab'
 
 
 ###BUILDER
@@ -69,7 +71,13 @@ class FolderBuilder extends Builder
   makeCoffeeDoc: (renderer="html")=>
     command = "coffeedoc --renderer #{renderer} #{@input}/#{coffees}"
     execute command
-
+ ###
+  compile: =>
+    files = new Rehab().process @input
+    to_single_file = "--join #{@output}"
+    from_files = "--compile #{files.join ' '}"
+    execute "coffee #{to_single_file} #{from_files}"
+ ###
 
 appBuilder = new Builder(path,"chat.coffee","js/")
 collabBuilder = new FolderBuilder(path, "collab", "js/","collab.js")
@@ -77,14 +85,19 @@ modelsBuilder = new FolderBuilder(path, "models", "js/", "models.js")
 viewsBuilder = new FolderBuilder(path, "views", "js/","views.js")
 controllersBuilder = new FolderBuilder(path, "controllers", "js/", "controllers.js")
 mockBuilder = new Builder(path,"mock.coffee","js/")
+modelsBuilder = new FolderBuilder(path, "models", "js/", "models.js")
+
 
 #FUNCTIONS THAT ARE USED IN TASKS
 #---------
 #testing is described here http://net.tutsplus.com/tutorials/javascript-ajax/better-coffeescript-testing-with-mocha/
 test = ->
   console.log "Testing started"
+
   #testing is described here http://net.tutsplus.com/tutorials/javascript-ajax/better-coffeescript-testing-with-mocha/
   execute "mocha --compilers coffee:coffee-script --ignore-leaks"
+ # execute "mocha-phantomjs test/test.html"
+
   console.log "Testing completed"
 
 
@@ -101,7 +114,7 @@ compile = ->
 #in Linux it can be installed by
 # sudo easy_install pygments
 makeDocs = ->
-  console.log "Documentation generation started"
+  consolne.log "Documentation generation started"
   #execute("docco #{path}#{coffees}")
   execute "coffeedoc #{path}/#{coffees}"
   for builder in FolderBuilder.all
@@ -137,9 +150,10 @@ task 'make:docs', 'generates docs for sources', ->
 task 'build', 'Builds project from src/*.coffee to lib/*.js', ->
   console.log "Build task started"
   compile()
+  #rehabcompile()
   test()
 
-  makeDocs()
+  #makeDocs()
   console.log "Build task completed"
 
 

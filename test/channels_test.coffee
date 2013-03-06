@@ -2,24 +2,14 @@ chai = require 'chai'
 chai.should()
 expect = chai.expect;
 require '../lib/batman.js'
+require '../collab/socket_event.coffee'
+require '../collab/channel.coffee'
 require '../collab/mock_socket.coffee'
 require '../collab/socket.coffee'
 
+describe 'Channels test:', ->
 
-describe 'MockSocket test', ->
-
-  it 'should test sending', ->
-    mock = new Batman.MockSocket("testurl")
-    message = "test content"
-    mock.onmessage = (str)-> message = str
-    message.should.not.equal "Hello"
-    mock.send "Hello"
-    message.should.to.have.ownProperty("data")
-    message.data.should.equal "Hello"
-
-describe 'Channels tests', ->
-
-  socket = new Batman.Socket("someurl", no)
+  socket = new Batman.Socket("none")
 
   def = socket.newChannel("default")
   all = socket.newChannel("all")
@@ -36,26 +26,27 @@ describe 'Channels tests', ->
   clean = ->
     mdef=mall=mbbc=mcnn=mictv =""
 
-  def.onmessage = (str)->mdef = str
-  all.onmessage = (str)->mall = str
-  bbc.onmessage = (str)->mbbc = str
-  cnn.onmessage = (str)->mcnn = str
-  ictv.onmessage = (str)->mictv = str
+  def.onmessage = (evt)->mdef = evt.content
+  all.onmessage = (evt)->mall = evt.content
+  bbc.onmessage = (evt)->mbbc = evt.content
+  cnn.onmessage = (evt)->mcnn = evt.content
+  ictv.onmessage = (evt)->mictv = evt.content
 
-  it 'should test broadcasting', ->
+
+  it 'tests broadcasting', ->
 
     event =
       data: "Hello default"
     event.data.channel = "default"
 
 
-    socket.broadcast(event)
+    socket.broadcast(Batman.SocketEvent.fromEvent(event))
 
     mdef.should.equal "Hello default"
     mall.should.equal ""
     mcnn.should.equal ""
 
-    socket.broadcastTo("Hello CNN", "cnn")
+    socket.broadcast(new Batman.SocketEvent("Hello CNN", "cnn"))
 
     mdef.should.equal "Hello default"
     mall.should.equal ""
@@ -64,14 +55,15 @@ describe 'Channels tests', ->
 
     clean()
 
-  it 'should test mock socket', ->
+  it 'tests mock socket', ->
     mdef.should.equal ""
     mcnn.should.equal ""
 
     mock = socket.socket
     event =
-      data: "BBC reports from mock"
-    event.channel = "bbc"
+      data:
+        content: "BBC reports from mock"
+        channel: "bbc"
 
 
     #socket.on "default",-> console.log "def"
@@ -79,7 +71,11 @@ describe 'Channels tests', ->
 
     mock.send event
 
-
     mbbc.should.equal "BBC reports from mock"
 
+    event =
+      data: "some default event"
 
+    mock.send event
+    mdef.should.equal "some default event"
+    mbbc.should.equal "BBC reports from mock"

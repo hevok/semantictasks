@@ -1,5 +1,8 @@
 #this class creates some mock data to work with
 class Chat.MockData extends Batman.Object
+  constructor: ->
+    @socket = Batman.Socket.getInstance()
+    @massenger = @socket.socket
 
   showDaniel : 'Show this code to Daniel'
   integrate : 'Integrate with semantic chat application'
@@ -32,7 +35,14 @@ class Chat.MockData extends Batman.Object
       text: 'I am still alive!'
       user: "Robot"
     switch num
-      when 1 then new Chat.Message(text: "Hi guys! Look at my code!", user: "Anton").save()
+      when 1
+        @massenger.send
+          data:
+            content:
+              text:"Hi, guys! Look at my code!"
+              user:"Anton"
+            request: "push"
+            channel: Chat.Message.storageKey
       when 2
         new Chat.Message(text: "Wait a moment, I shall see", user: "Daniel").save()
         @completeTasksByTitle(@runCode)
@@ -100,7 +110,7 @@ class Chat.MockData extends Batman.Object
     @kill Chat.Task.get("all")
 
 
-mockData = new Chat.MockData
+mockData = new Chat.MockData()
 
 mockData.cleanUp()
 mockData.createTasks()

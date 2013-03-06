@@ -1,14 +1,20 @@
+#_require channel.coffee
+#_require socket_event.coffee
+
+
 class Batman.MockSocket extends Batman.Object
   constructor: (@url)->
 
-  send: (str)=>
-    if typeof str == 'string'
-      @onmessage(data :str)
+  send: (event)=>
+    if typeof event == 'string'
+      @onmessage(data :event)
     else
-      if(str.hasOwnProperty("data"))
-        @onmessage str
+      if(event.hasOwnProperty("data"))
+        @onmessage event
       else
-        @onmessage data: JSON.stringify(str)
+        @onmessage data: JSON.stringify(event)
+
+      #event = Batman.SocketEvent.fromEvent()
 
 
   onopen: =>

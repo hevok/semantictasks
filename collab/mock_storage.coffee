@@ -1,9 +1,14 @@
+#_require socket_event.coffee
+#_require channel.coffee
+#_require socket.coffee
+
 #nothing here there, it is just a localStorage wrapper
 
-class Chat.MockStorage
+class Batman.MockStorage
   constructor: ->
     #return null if typeof window.localStorage is 'undefined'
     @storage = localStorage
+
 
   getItem: (key)-> @storage.getItem key
 

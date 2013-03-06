@@ -8,8 +8,10 @@ class Chat extends Batman.App
   #@route "/active", "tasks#active"
 
 #stores to global container
-Batman.container.Chat = Chat
+container = Batman.container
+container.Chat = Chat
 
 #add listener to the window object to fire run when everything has been loaded
-window.addEventListener 'load', ->
-  Chat.run()
+if(window?)
+  window.addEventListener 'load', ->
+    Chat.run()

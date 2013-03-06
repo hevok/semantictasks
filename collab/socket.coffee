@@ -1,60 +1,38 @@
-### Channel class
-evey socket sends info for various channels
-to channels the models will be binded
-each model will have a channel that is connected to its storage key
-###
-class Batman.Channel extends Batman.Object
-  constructor: (@name) ->
-
-  send: (obj) =>
-    fire "send", obj
-
-  receive: (event) =>
-    if event.hasOwnProperty("data")
-      @onmessage(event.data)
-    else
-      @onmessage event
-
-  onmessage: (event) =>
-
-  attach: (obj)=>
-    obj.on(@name, (event)=>@receive(event))
-    obj.on("all", (event)=>@receive(event))
-    @
+#_require socket_event.coffee
+#_require channel.coffee
 
 ##websocket wrapper that broadcast info to its channels
 #it not only uses either real or mock socket but broadcasts messages to various channels through events
 class Batman.Socket extends Batman.Object
   #creates a socket object
-  constructor: (@url, real = yes)->
+  constructor: (@url)->
     #checks if websocket is in batman container
-    if Batman.container.hasOwnProperty("socket")
-      @socket = Batman.container["socket"]
+    @socket = if(Batman.container.hasOwnProperty("websocket"))
+      Batman.container["websocket"]
     else
-      if real
-        @socket = new WebSocket(@url)
-      else
-        @socket = new Batman.MockSocket(@url)
-      Batman.container.socket = @socket
-      @socket.onmessage = (event)=>@broadcast(event)
+      @createInnerSocket(@url)
+    @socket.onmessage = (event)=>@broadcast(Batman.SocketEvent.fromEvent(event))
+    Batman.container.socket = @
 
-  broadcastTo: (message, channelName) ->
-    if typeof message == 'string'
-      message =
-        data: message
-        channel: channelName
-    else
-      message.channel = channelName
-    @broadcast(message)
 
-  broadcast: (message)->
-    if message.hasOwnProperty("channel")
-      @fire(message.channel,message)
+  @getInstance: (url="none")=>
+    if Batman.container.hasOwnProperty("socket") then Batman.container.socket else new Batman.Socket(url)
+
+  createInnerSocket:  (url)=>
+    @socket = unless url=="none"
+      new WebSocket(@url)
     else
-      if message.hasOwnProperty("data") and message.data.hasOwnProperty("channel")
-        @fire(message.data.channel, message.data)
-      else
-        @fire("default", message)
+      new Batman.MockSocket(@url)
+    Batman.container.websocket = @socket
+
+
+  ###
+  broadcasts the message further
+  ###
+  broadcast: (event)->
+    unless event instanceof Batman.SocketEvent
+      throw Error 'should be socket event'
+    @fire(event.channel, event)
 
   newChannel: (name)=> new Batman.Channel(name).attach(@)
 
@@ -65,7 +43,7 @@ class Batman.Socket extends Batman.Object
       json = obj
     @socket.send(json)
 
-
+  ###
 
   #duplication to be fixed in the Future
   send: (obj, channelName) ->
@@ -76,3 +54,4 @@ class Batman.Socket extends Batman.Object
       json = obj
     json.channel = channelName
     @socket.send(json)
+   ###

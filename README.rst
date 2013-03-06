@@ -53,6 +53,12 @@ Setting up SemanticTasks
 
 	$ sudo npm install chai
 
+	Rehab ( https://github.com/Vizir/rehab ) for better file joins:
+
+	$sudo npm install -g rehab
+
+
+
 	Coffeedoc ( https://github.com/omarkhan/coffeedoc ) for documentation generation:
 
 	$ sudo npm install -g coffeedoc
