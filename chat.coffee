@@ -1,8 +1,16 @@
+###
+  #Chat App#
+  Application coffee of the chat
+###
+
 #disable routingkey warnings for controllers
 Batman.config.minificationErrors = false
 
-#Application object of the chat
 class Chat extends Batman.App
+  ###
+  Application object of the chat
+  ###
+
   #@root '#'
   #@route "/completed", "tasks#completed"
   #@route "/active", "tasks#active"

@@ -1,9 +1,13 @@
-#model for users of the chat, now is only used for test purposes
 ###
-  ##User class
-  Class for chat users
+#User class#
+model for users of the chat, now is only used for test purposes
+Class for chat users
 ###
+
 class Chat.User extends Batman.Model
+  ###
+  Class for chat users
+  ###
 
   #declares that properties name and status will be saved when @save() is called
   @encode 'name', 'status'

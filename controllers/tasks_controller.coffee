@@ -1,5 +1,12 @@
-#controller that works with all tasks
+###
+  #TaskContoller class#
+  controller that works with all tasks
+###
+
 class Chat.TasksController extends Batman.Controller
+  ###
+  controller that works with all tasks
+  ###
   test: "test"
 
   constructor: ->

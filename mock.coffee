@@ -1,8 +1,12 @@
 ###
-   ##MockData
+   #MockData#
   this class creates some mock data to work with
 ###
 class Chat.MockData extends Batman.Object
+  ###
+  this class creates some mock data to work with
+  ###
+
   constructor: ->
     @socket = Batman.Socket.getInstance()
     @massenger = @socket.socket
@@ -11,9 +15,10 @@ class Chat.MockData extends Batman.Object
   integrate : 'Integrate with semantic chat application'
   runCode : 'Run this code in the browser'
 
-  ###creates mock tasks
-  ###
   createTasks: (num = 1)=>
+    ###
+    creates mock tasks
+    ###
     #JSON test
     json =
       owner: 'Robot'
@@ -33,10 +38,11 @@ class Chat.MockData extends Batman.Object
         @createTasks(4)
 
 
-  ###
-    creates mock messages
-  ###
+
   createMessages: (num = 1)=>
+    ###
+    creates mock messages
+    ###
     json =
       text: 'I am still alive!'
       user: "Robot"
@@ -76,25 +82,27 @@ class Chat.MockData extends Batman.Object
     new Chat.User(name: "coced", status:"active").save()
     new Chat.User(name: "Robot", status:"active").save()
 
-  ###
-  random int generating function
-  ###
-  randomInt: (min, max)=> Math.floor(Math.random() * (max - min + 1)) + min
 
-  ###
-    callback that generates mock data (one of two test objects each second)
-  ###
+  randomInt: (min, max)=>
+    ###
+      random int generating function
+    ###
+    Math.floor(Math.random() * (max - min + 1)) + min
+
   generate: =>
+    ###
+      callback that generates mock data (one of two test objects each second)
+    ###
     num = @randomInt(1,4)
     switch @randomInt(1,2)
       when 1 then @createTasks(num)
       when 2 then @createMessages(num)
     setTimeout(@generate, 1500)
 
-  ###
-    Completes all tasks that has this owner
-  ###
   completeTasksByOwner: (owner)=>
+    ###
+    Completes all tasks that has this owner
+    ###
     all = Chat.Task.get("all").toArray()
     for item in all
       if item.get("owner") == owner and item.get("completed")==false
@@ -102,10 +110,11 @@ class Chat.MockData extends Batman.Object
         #because set not only saves the value but also do a lot of other useful stuf (like views and binding updates)
         item.set "completed", true
 
-  ###
-    Completes all tasks that has this title
-  ###
+
   completeTasksByTitle: (title)=>
+    ###
+    Completes all tasks that has this title
+    ###
     all = Chat.Task.get("all").toArray()
     for item in all
       if item.get("title") == title and item.get("completed")==false
@@ -113,16 +122,18 @@ class Chat.MockData extends Batman.Object
         #because set not only saves the value but also do a lot of other useful stuf (like views and binding updates)
         item.set "completed", true
 
-  ###
-    Deletes items from localStorage of HTML
-  ###
   kill : (items)=>
+    ###
+    Deletes items from localStorage of HTML
+    ###
     arr = items.toArray()
     for item in arr
       item.destroy()
 
-  #cleanup localstore
   cleanUp: =>
+    ###
+    cleanup localstore
+    ###
     @kill Chat.Message.get("all")
     @kill Chat.User.get("all")
     @kill Chat.Task.get("all")

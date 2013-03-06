@@ -1,9 +1,13 @@
 ###
-
-#model for the task
-contains owner, title and completed of the task
+  #model for the task#
+  contains owner, title and completed of the task
 ###
+
 class Chat.Task extends Batman.Model
+  ###
+  model for the task
+  contains owner, title and completed of the task
+  ###
 
   #declares that properties title and completed will be saved when @save() is called
   @encode 'owner','title', 'completed'
@@ -17,13 +21,15 @@ class Chat.Task extends Batman.Model
   #key for local (by the browser) storage
   @storageKey: 'tasks'
 
-  #return all active tasks
   @classAccessor 'active', ->
+    ###return all active tasks###
     @get('all').filter (task) -> !task.get('completed')
 
   #returns all completed tasks
   @classAccessor 'completed', ->
-    #gets all tasks and than applies filter function
+    ###
+      gets all tasks and than applies filter function
+    ###
     @get('all').filter (task) -> task.get('completed')
 
   @wrapAccessor 'title', (core) ->

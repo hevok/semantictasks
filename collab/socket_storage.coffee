@@ -1,45 +1,53 @@
+###
+#SocketStorage#
+
+This is a Socket storage adaptor needed to connect Batman's models to websocket
+It has not been finished yet.
+###
+
+
 #_require ./socket_event.coffee
 #_require ./channel.coffee
 #_require ./socket.coffee
 #_require ./mock_storage.coffee
 
-###
-  #SocketStorage
+class Batman.SocketStorage extends Batman.StorageAdapter
+  ###
+  #SocketStorage#
 
   This is a Socket storage adaptor needed to connect Batman's models to websocket
   It has not been finished yet.
-###
-class Batman.SocketStorage extends Batman.StorageAdapter
+  ###
+
   constructor: ->
-    #return null if typeof window.localStorage is 'undefined'
     super
     @socket = new Batman.Socket.getInstance()
     @storage = new Batman.MockStorage()
 
-  ###
-    subscribes a model to the channel
-  ###
   subscribe: (model,storageKey)=>
-    model.channel = @socket.newChannel(storageKey)
+    ###
+      subscribes a model to the channel
+    ###
+    model.set("channel", @socket.newChannel(storageKey))
     model.channel.onmessage = (event)=>
       all = model.get("all")
       all.add(event.content)
 
 
 
-  ###
-    override to make things working with new storage
-  ###
   _forAllStorageEntries: (iterator) ->
+    ###
+    override to make things working with new storage
+    ###
     for i in [0...@storage.length()]
       key = @storage.key(i)
       iterator.call(@, key, @storage.getItem(key))
     true
 
-  ###
-    overrided readAll to add subscription
-  ###
   readAll: @skipIfError (env, next) ->
+    ###
+    overrided readAll to add subscription
+    ###
     try
       arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
     catch error
@@ -49,10 +57,10 @@ class Batman.SocketStorage extends Batman.StorageAdapter
     @subscribe(model, key)
     next()
 
-  ###
-    ##Generates GUI as id for a record
-  ###
   nextIdForRecord : ->
+    ###
+    ##Generates GUI as id for a record
+    ###
     "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace /[xy]/g, (c) ->
       r = Math.random() * 16 | 0
       v = (if c is "x" then r else (r & 0x3 | 0x8))

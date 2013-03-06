@@ -1,21 +1,35 @@
 ###
-#model for messages
+#model for messages#
 contains text and user fields
 ###
 class Chat.Message extends Batman.Model
+  ###
+  model for messages
+  contains text and user fields
+  ###
 
-  #two fields to be stored: text and user
   @encode 'text', 'user'
+  ###
+    two fields to be stored: text and user
+  ###
 
-  #validate if text is present each time we create Message
+
   @validate 'text', presence: true
+  ###
+    validate if text is present each time we create Message
+  ###
 
 
-  #messages are stored in browser local storage
-  #@persist Batman.LocalStorage
+
   @persist Batman.SocketStorage
+  ###
+    messages are stored in browser local storage
+  ###
 
 
-  #key for local (by the browser) storage
   @storageKey: 'messages'
+  ###
+    key for local (by the browser) storage
+  ###
+
 
