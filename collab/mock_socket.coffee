@@ -15,19 +15,9 @@ class Batman.MockSocket extends Batman.Object
   constructor: (@url)->
 
 
-  send: (event)=>
-    ###
-      Sends event to websocket
-      if event's request is save, immediately make a mock response
-    ###
-    data = Batman.SocketEvent.fromData(event)
-    if(data.request =="save" or data.request =="create")
-      data.request = "push"
-    event =
-      data: data
-    @onmessage(event)
+  send: (event)=>@onreceive(event)
 
-
+  onreceive: (event)=>
 
 
   onopen: ->

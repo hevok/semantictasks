@@ -28,7 +28,7 @@ class Batman.Socket extends Batman.Object
     ###
       works as singletone
     ###
-    if Batman.container.hasOwnProperty("socket") then Batman.container.socket else new Batman.Socket(url)
+    if Batman.container.socket? then Batman.container.socket else new Batman.Socket(url)
 
   createInnerSocket:  (url)=>
     @socket = unless url=="none"
@@ -48,7 +48,7 @@ class Batman.Socket extends Batman.Object
       throw Error 'should be socket event'
     @fire(event.channel, event)
 
-  newChannel: (name)=> new Batman.Channel(name).attach(@)
+  getChannel: (name)=>  @getOrSet(name,=>new Batman.Channel(name).attach(@))
 
   send: (obj)->
     ###

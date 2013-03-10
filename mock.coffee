@@ -10,6 +10,12 @@ class Chat.MockData extends Batman.Object
   constructor: ->
     @socket = Batman.Socket.getInstance()
     @massenger = @socket.socket
+    mock = @massenger
+    mock.onreceive = (event)->
+      data = Batman.SocketEvent.fromData(event)
+      if(data.request=="save")
+        mock.onmessage(data)
+
 
   showDaniel : 'Show this code to Daniel'
   integrate : 'Integrate with semantic chat application'

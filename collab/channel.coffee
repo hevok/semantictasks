@@ -14,8 +14,14 @@ class Batman.Channel extends Batman.Object
   ###
   constructor: (@name) ->
 
+
+  ask: (id) =>
+    @fire "ask", new Batman.SocketEvent("",@name,"read",id)
+
   send: (obj) =>
-    fire "send", obj
+    data = Batman.SocketEvent.fromData(obj)
+    data.channel = @name
+    @fire "send", data
 
 
   receive: (event) =>
@@ -34,4 +40,6 @@ class Batman.Channel extends Batman.Object
     ###
     obj.on(@name, (event)=>@receive(event))
     obj.on("all", (event)=>@receive(event))
+    @on "send", (data)=>obj.send(data)
+    @on "ask", (data)=>obj.send(data)
     @

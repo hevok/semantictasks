@@ -22,27 +22,37 @@ class Batman.SocketStorage extends Batman.StorageAdapter
   constructor: ->
     super
     @socket = new Batman.Socket.getInstance()
-    @storage = new Batman.MockStorage()
+    #@storage = new Batman.MockStorage()
 
   subscribe: (model,storageKey)=>
     ###
       subscribes a model to the channel
     ###
-    model.set("channel", @socket.newChannel(storageKey))
-    model.channel.onmessage = (event)=>
+    channel = @socket.getChannel(storageKey)
+    channel.onmessage = (event)=>
       all = model.get("all")
       all.add(event.content)
 
 
 
-  _forAllStorageEntries: (iterator) ->
+  _forAllStorageEntries: (array,iterator) ->
     ###
     override to make things working with new storage
     ###
-    for i in [0...@storage.length()]
+    for i in [0...@storage.length()] ##########################################3insert array
       key = @storage.key(i)
       iterator.call(@, key, @storage.getItem(key))
     true
+
+  _storageEntriesMatching: (constructor, options) ->
+    re = @storageRegExpForRecord(constructor.prototype)
+    records = []
+    @_forAllStorageEntries (storageKey, storageString) ->
+      if keyMatches = re.exec(storageKey)
+        data = @_jsonToAttributes(storageString)
+        data[constructor.primaryKey] = keyMatches[1]
+        records.push data if @_dataMatches(options, data)
+    records
 
   readAll: @skipIfError (env, next) ->
     ###
@@ -97,15 +107,7 @@ class Batman.SocketStorage extends Batman.StorageAdapter
   #################COPY PASTED CODE LIES UNDERNEATH########################
 
 
-  _storageEntriesMatching: (constructor, options) ->
-    re = @storageRegExpForRecord(constructor.prototype)
-    records = []
-    @_forAllStorageEntries (storageKey, storageString) ->
-      if keyMatches = re.exec(storageKey)
-        data = @_jsonToAttributes(storageString)
-        data[constructor.primaryKey] = keyMatches[1]
-        records.push data if @_dataMatches(options, data)
-    records
+
 
   _dataMatches: (conditions, data) ->
     match = true
