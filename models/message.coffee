@@ -8,9 +8,10 @@ class Chat.Message extends Batman.Model
   contains text and user fields
   ###
 
-  @encode 'text', 'user'
+  @encode 'id','text', 'user'
   ###
-    two fields to be stored: text and user
+    id and two other fields to be stored: text and user
+    when you make models do not forget about id
   ###
 
 

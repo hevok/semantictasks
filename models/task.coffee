@@ -10,7 +10,7 @@ class Chat.Task extends Batman.Model
   ###
 
   #declares that properties title and completed will be saved when @save() is called
-  @encode 'owner','title', 'completed'
+  @encode 'id','owner','title', 'completed'
 
   #tells that all data saved by @save() function will be stored in the Browser local storage
   @persist Batman.LocalStorage

@@ -19,55 +19,85 @@ class Batman.SocketStorage extends Batman.StorageAdapter
   It has not been finished yet.
   ###
 
-  constructor: ->
-    super
+  constructor: (model) ->
+    ###
+      Initialize storage adaptor as well as socket
+    ###
+    super(model)
     @socket = new Batman.Socket.getInstance()
-    @storage = new Batman.MockStorage()
 
+  _dataMatches: (conditions, data) ->
+    match = true
+    for k, v of conditions
+      if data[k] != v
+        match = false
+        break
+    match
 
-  readAll: @skipIfError (env, next) ->
+  subscribe: (model)=>
     ###
-    overrided readAll to add subscription
+      Subscribe model to different events
     ###
-    model = env.subject
     channel = @socket.getChannel(model.storageKey)
     channel.onmessage = (event)=>
-      all = model.get("all")
+      all = model.get("loaded")
       #id = event.content.id
       switch event.request
         when "push"
-          #res = all.find (item)=>item.id==event.content.id
-          #if res? then all.remove res
+          model.records
+          res = all.find (item)=>item.id==event.content.id
+          if res? then all.remove res
           all.add(event.content)
         when "delete"
           res = all.find (item)=>item.id==event.content.id
           if res? then all.remove res
-    env.channel = channel
-    try
-      arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
-    catch error
-      arguments[0].error = error
+    channel
+
+
+  readAll: (env, next) ->#@skipIfError (env, next) ->
+    ###
+    overrided readAll to add subscription
+    ###
+    channel = @subscribe(env.subject)
+    options = env.options.data
+
+    channel.onNextMessage (event)->
+      try
+        records = []
+        if event.content? and event.content.length?
+          for item in event.content
+            records.push item if @_dataMatches(options,item)
+        env.recordsAttributes = records
+      catch error
+        env.error = error
+      next()
+    channel.readAll()
+
+
+  create: ({key,id, recordAttributes}, next) -> #@skipIfError ({channel,id, recordAttributes}, next) ->
+    channel = @socket.getChannel(key)
+    channel.save(recordAttributes,id)
     next()
 
+  read: ({key,id, recordAttributes}, next) -> #@skipIfError ({key,id, recordAttributes}, next) ->
+    channel = @socket.getChannel(key)
+    channel.onNextMessage =>
+      if !env.recordAttributes
+        env.error = new @constructor.NotFoundError()
+        next()
+    channel.read(id)
+    #do not forget about change in future
 
-  _forAllStorageEntries: (array,iterator) ->
-    ###
-    override to make things working with new storage
-    ###
-    for i in [0...@storage.length()] ##########################################3insert array
-      key = @storage.key(i)
-      iterator.call(@, key, @storage.getItem(key))
-    true
 
-  _storageEntriesMatching: (constructor, options) ->
-    re = @storageRegExpForRecord(constructor.prototype)
-    records = []
-    @_forAllStorageEntries (storageKey, storageString) ->
-      if keyMatches = re.exec(storageKey)
-        data = @_jsonToAttributes(storageString)
-        data[constructor.primaryKey] = keyMatches[1]
-        records.push data if @_dataMatches(options, data)
-    records
+  update: ({key,id, recordAttributes}, next) ->#@skipIfError ({key,id, recordAttributes}, next) ->
+    channel = @socket.getChannel()
+    channel.save(recordAttributes,id)
+    next()
+
+  destroy: ({key,id}, next) -> #@skipIfError ({key,id}, next) ->
+    channel = @socket.getChannel()
+    channel.remove(id)
+    next()
 
 
   @::before 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
@@ -77,40 +107,10 @@ class Batman.SocketStorage extends Batman.StorageAdapter
       env.id = env.subject.get('id')
 
     unless env.id? then env.error = new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
-    env.key = env.subject.storageKey
+    key = @storageKey(env.subject)
+    env.key = key
 
     next()
-
-  create: ({key,id, recordAttributes}, next) -> #@skipIfError ({channel,id, recordAttributes}, next) ->
-    #alert "!!!!!!!!!!!!!!"
-    console.log recordAttributes
-    #recordAttributes.id = id
-    console.log key
-    channel = channel = @socket.getChannel(key)
-
-    #channel.save(recordAttributes)
-    #console.log recordAttributes
-    #@storage.setItem(key, recordAttributes)
-    next()
-
-  update: @skipIfError ({id, recordAttributes}, next) ->
-    #@storage.setItem(id, recordAttributes)
-    next()
-
-  destroy: @skipIfError ({channel,id}, next) ->
-    channel.remove(id)
-    #@storage.removeItem(id)
-    next()
-
-  #################COPY PASTED CODE LIES UNDERNEATH########################
-
-  _dataMatches: (conditions, data) ->
-    match = true
-    for k, v of conditions
-      if data[k] != v
-        match = false
-        break
-    match
 
 
   @::before 'create', 'update', @skipIfError (env, next) ->
@@ -129,7 +129,6 @@ class Batman.SocketStorage extends Batman.StorageAdapter
 
   @::after 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
     env.result = env.subject
-    console.log env.result
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
@@ -137,8 +136,3 @@ class Batman.SocketStorage extends Batman.StorageAdapter
       @getRecordFromData(recordAttributes, env.subject)
     next()
 
-  read: @skipIfError (env, next) ->
-    env.recordAttributes = @storage.getItem(env.key)
-    if !env.recordAttributes
-      env.error = new @constructor.NotFoundError()
-    next()
