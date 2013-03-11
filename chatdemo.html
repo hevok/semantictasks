@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Learn Batman!</title>
+    <title>This chat conversation is generated in runtinbe from mock.coffee</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 
     <link rel="stylesheet" href="resources/css/tasks.css" type="text/css">
@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="resources/css/users.css" type="text/css">
 
     <script src="./lib/es5-shim.js"></script>
+    <script src="./lib/jquery-1.9.1.js"></script>
     <script src="./lib/batman.js"></script>
     <script src="./lib/batman.solo.js"></script>
     <script src="./js/chat.js"></script>
+    <script src="./js/collab.js"></script>
     <script src="./js/models.js"></script>
     <script src="./js/views.js"></script>
     <script src="./js/controllers.js"></script>
@@ -28,17 +30,15 @@
     </header>
 
     <section class="board" data-showif="Task.all.length">
-        <ul>
-            <li data-foreach-task="Task.all"
-                data-addclass-completed="task.completed"
-                data-addclass-editing="task.editing">
-                <div  data-view="TaskView">
-                    <input type="checkbox" data-bind="task.completed" />
-                    <label data-bind="task.title"  data-event-click="click"></label>
-                    <Button data-event-click="click">X</Button>
-                </div>
-            </li>
-       </ul>
+        <table>
+            <tbody>
+            <tr data-foreach-task="Task.all">
+                <th data-bind="task.owner"><th>
+                <td data-bind="task.title"  data-event-click="click"></td>
+                <td><input type="checkbox" data-bind="task.completed" /></td>
+            </tr>
+            </tbody>
+       </table>
     </section>
 </section>
 <section class="dashboard" id="messageboard">
