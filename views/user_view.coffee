@@ -4,5 +4,5 @@ class Chat.UserView extends Batman.View
     # process arguments and stuff
     super
     #write node to separate variable, node is an HTMLNode to which view is attached to
-    node = @get("node")
+    #$node = $ @get("node")
 

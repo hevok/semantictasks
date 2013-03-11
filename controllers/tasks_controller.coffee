@@ -1,10 +1,20 @@
-#controller that works with all tasks
+###
+  #TaskContoller class#
+  controller that works with all tasks
+###
+
 class Chat.TasksController extends Batman.Controller
+  ###
+  controller that works with all tasks
+  ###
   test: "test"
 
   constructor: ->
     super
     @set 'newTask', new Chat.Task(completed: false)
+
+  items:->
+    Task.get('all')
 
   #get all of the tasks
   all: ->
