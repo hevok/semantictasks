@@ -58,9 +58,6 @@ describe "With socket channels we", ->
       id:id2
       data:"somecontent2"
 
-  event1.request = "save"
-  event2.request = "save"
-
   it "save information", ->
 
     channels.ictv.save event1
@@ -76,43 +73,49 @@ describe "With socket channels we", ->
 
 
   it "read information", ->
-    channels.ictv.onmessage = (event)=>
+    channels.ictv.onNextMessage (event)=>
       event.content.data.should.equal "somecontent2"
 
     channels.ictv.read id2
 
-    channels.ictv.onmessage = (event)=>
+    channels.ictv.onNextMessage (event)=>
       event.content.data.should.equal "somecontent1"
 
     channels.ictv.read id1
 
 
-    arr = mock.get(channels.ictv.name).toArray()
-
   it "read all information", ->
 
-    channels.ictv.onmessage = (event)=>
+    channels.ictv.onNextMessage (event)=>
       event.request.should.equal "readAll"
       arr = event.content
       arr[0].data.should.equal "somecontent1"
       arr[1].data.should.equal "somecontent2"
-
-
     channels.ictv.readAll()
+
+  it "update information", ->
+    upd =
+      content:
+        id:id2
+        data:"somecontent20"
+    channels.ictv.save upd
+
+    arr = mock.get(channels.ictv.name).toArray()
+    arr.length.should.equal 2
+    arr[0].data.should.equal("somecontent1")
+    arr[1].data.should.equal("somecontent20")
+
 
   it "remove information", ->
     arr = mock.get(channels.ictv.name).toArray()
     arr.length.should.equal 2
     arr[0].data.should.equal("somecontent1")
-    arr[1].data.should.equal("somecontent2")
+    arr[1].data.should.equal("somecontent20")
 
     channels.ictv.remove id1
     arr = mock.get(channels.ictv.name).toArray()
     arr.length.should.equal 1
-    arr[0].data.should.equal("somecontent2")
-
-
-
+    arr[0].data.should.equal("somecontent20")
 
 
 

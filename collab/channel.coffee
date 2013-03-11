@@ -13,11 +13,16 @@ class Batman.Channel extends Batman.Object
   Channels are needed to communicate directly with the model
   ###
   constructor: (@name) ->
+    @on "onmessage", (event)=>@onmessage(event)
 
+  save: (obj, id) =>
+    obj.id = id
+    @save obj
 
   save: (obj) =>
     data = Batman.SocketEvent.fromData(obj)
     data.channel = @name
+    data.request = "save"
     @fire "send", data
 
 
@@ -36,13 +41,15 @@ class Batman.Channel extends Batman.Object
 
   receive: (event) =>
     #should receive event with data
-    @onmessage(event)#@onmessage(event.content)
+    @fire "onmessage",event
 
+  onNextMessage:(fun)=>@once "onmessage", (event)=>fun(event)
 
   onmessage: (event) =>
     ###
       call back the receives info from socket send to this channel
     ###
+    @fire "onmessage",event
 
   attach: (obj)=>
     ###

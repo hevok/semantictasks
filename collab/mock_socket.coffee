@@ -56,20 +56,25 @@ class Batman.MockSocket extends Batman.Object
           ###
             if we received request to save something we answer to it with result
           ###
-          data.request = "answer"
+          data.request = "push"
           if data.content.id?
+            id = data.content.id
             ###
               if we were give id we just give item with appropriate id
             ###
-            mock.set data.content.id, data
+            mock.set id, data
             all = mock.getOrSet(data.channel, =>new Batman.SimpleSet())
+            res = all.find (item)->item.id==id
+            if res? then all.remove res
             all.add data.content
+            mock.onmessage(data)
         when "delete"
           if data.content.id?
             id = data.content.id
-            content = mock.get(data.channel)
-            res = content.find (item)->item.id==id
-            if res? then content.remove(res)
+            mock.unset id
+            all = mock.getOrSet(data.channel, =>new Batman.SimpleSet())
+            res = all.find (item)->item.id==id
+            if res? then all.remove(res)
         when "read"
           if data.content.id?
             data = mock.get(data.content.id)

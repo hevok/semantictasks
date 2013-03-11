@@ -24,15 +24,30 @@ class Batman.SocketStorage extends Batman.StorageAdapter
     @socket = new Batman.Socket.getInstance()
     @storage = new Batman.MockStorage()
 
-  subscribe: (model,storageKey)=>
+
+  readAll: @skipIfError (env, next) ->
     ###
-      subscribes a model to the channel
+    overrided readAll to add subscription
     ###
-    channel = @socket.getChannel(storageKey)
+    model = env.subject
+    channel = @socket.getChannel(model.storageKey)
     channel.onmessage = (event)=>
       all = model.get("all")
-      all.add(event.content)
-
+      #id = event.content.id
+      switch event.request
+        when "push"
+          #res = all.find (item)=>item.id==event.content.id
+          #if res? then all.remove res
+          all.add(event.content)
+        when "delete"
+          res = all.find (item)=>item.id==event.content.id
+          if res? then all.remove res
+    env.channel = channel
+    try
+      arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
+    catch error
+      arguments[0].error = error
+    next()
 
 
   _forAllStorageEntries: (array,iterator) ->
@@ -54,60 +69,40 @@ class Batman.SocketStorage extends Batman.StorageAdapter
         records.push data if @_dataMatches(options, data)
     records
 
-  readAll: @skipIfError (env, next) ->
-    ###
-    overrided readAll to add subscription
-    ###
-    try
-      arguments[0].recordsAttributes = @_storageEntriesMatching(env.subject, env.options.data)
-    catch error
-      arguments[0].error = error
-    model = env.subject
-    key = model.storageKey
-    @subscribe(model, key)
-    next()
-
-  nextIdForRecord : ->
-    ###
-    ##Generates GUI as id for a record
-    ###
-    "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace /[xy]/g, (c) ->
-      r = Math.random() * 16 | 0
-      v = (if c is "x" then r else (r & 0x3 | 0x8))
-      v.toString 16
 
   @::before 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
     if env.action == 'create'
-      env.id = env.subject.get('id') || env.subject._withoutDirtyTracking => env.subject.set('id', @nextIdForRecord())
+      env.id = env.subject.get('id') || env.subject._withoutDirtyTracking => env.subject.set('id', Batman.SocketEvent.genId())
     else
       env.id = env.subject.get('id')
 
-    unless env.id?
-      env.error = new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
-    else
-      #env.key = @storageKey(env.subject) + env.id
-      env.key = env.id
+    unless env.id? then env.error = new @constructor.StorageError("Couldn't get/set record primary key on #{env.action}!")
+    env.key = env.subject.storageKey
+
     next()
 
-  create: @skipIfError ({key, recordAttributes}, next) ->
-    if @storage.getItem(key)
-      arguments[0].error = new @constructor.RecordExistsError
-    else
-      @storage.setItem(key, recordAttributes)
+  create: ({key,id, recordAttributes}, next) -> #@skipIfError ({channel,id, recordAttributes}, next) ->
+    #alert "!!!!!!!!!!!!!!"
+    console.log recordAttributes
+    #recordAttributes.id = id
+    console.log key
+    channel = channel = @socket.getChannel(key)
+
+    #channel.save(recordAttributes)
+    #console.log recordAttributes
+    #@storage.setItem(key, recordAttributes)
     next()
 
-  update: @skipIfError ({key, recordAttributes}, next) ->
-    @storage.setItem(key, recordAttributes)
+  update: @skipIfError ({id, recordAttributes}, next) ->
+    #@storage.setItem(id, recordAttributes)
     next()
 
-  destroy: @skipIfError ({key}, next) ->
-    @storage.removeItem(key)
+  destroy: @skipIfError ({channel,id}, next) ->
+    channel.remove(id)
+    #@storage.removeItem(id)
     next()
 
   #################COPY PASTED CODE LIES UNDERNEATH########################
-
-
-
 
   _dataMatches: (conditions, data) ->
     match = true
@@ -134,6 +129,7 @@ class Batman.SocketStorage extends Batman.StorageAdapter
 
   @::after 'read', 'create', 'update', 'destroy', @skipIfError (env, next) ->
     env.result = env.subject
+    console.log env.result
     next()
 
   @::after 'readAll', @skipIfError (env, next) ->
