@@ -38,73 +38,78 @@ class Batman.MockModel extends Batman.Object
     mechanism
 
 
-mockCallback =  (mock)=>
-  (event)=>
-    #console.log event
-    data = Batman.SocketEvent.fromString(event)
-    #console.log data
-    switch data.request
-      when "save"
-        data.request = "answer"
-        id = data.id
-        mock.set id, data
-      when "read"
-        data = mock.get(data.id)
-        data.request = "answer"
-        mock.onmessage(data)
 
 
-describe "In socket storage we use socket's channels to", ->
+describe "With socket channels we", ->
 
   channels = new Batman.MockChannels()
   mock = channels.getMock()
-  mock.onreceive = mockCallback(mock)
 
-  it 'run test', ->
-    ###
-    Just a sample test to test if all is working well
-    ###
-    truth = "aging kills"
-    truth.should.equal("aging kills")
+  id1 = Batman.SocketEvent.genId()
+  id2 = Batman.SocketEvent.genId()
 
-  it "answer questions", ->
-    id1 = Batman.SocketEvent.genId()
-    id2 = Batman.SocketEvent.genId()
-
-    event1 =
+  event1 =
+    content:
       id:id1
-      content : "somecontent1"
+      data: "somecontent1"
 
-    event2 =
+  event2 =
+    content:
       id:id2
-      content:"somecontent2"
+      data:"somecontent2"
 
-    event1.request = "save"
-    event2.request = "save"
+  event1.request = "save"
+  event2.request = "save"
 
-    channels.ictv.send event1
-    channels.ictv.send event2
+  it "save information", ->
+
+    channels.ictv.save event1
+    channels.ictv.save event2
 
 
-    mock.get(id1).content.should.equal("somecontent1")
-    mock.get(id2).content.should.equal("somecontent2")
+    mock.get(id1).content.data.should.equal("somecontent1")
+    mock.get(id2).content.data.should.equal("somecontent2")
 
+    arr = mock.get(channels.ictv.name).toArray()
+    arr[0].data.should.equal("somecontent1")
+    arr[1].data.should.equal("somecontent2")
+
+
+  it "read information", ->
+    channels.ictv.onmessage = (event)=>
+      event.content.data.should.equal "somecontent2"
+
+    channels.ictv.read id2
 
     channels.ictv.onmessage = (event)=>
-      event.content.should.equal "somecontent2"
+      event.content.data.should.equal "somecontent1"
 
-    channels.ictv.ask id2
+    channels.ictv.read id1
+
+
+    arr = mock.get(channels.ictv.name).toArray()
+
+  it "read all information", ->
 
     channels.ictv.onmessage = (event)=>
-      event.content.should.equal "somecontent1"
+      event.request.should.equal "readAll"
+      arr = event.content
+      arr[0].data.should.equal "somecontent1"
+      arr[1].data.should.equal "somecontent2"
 
-    channels.ictv.ask id1
 
+    channels.ictv.readAll()
 
-    it "read records", ->
-      storage = new Batman.SocketStorage()
-      Batman.MockModel.persist(storage)
+  it "remove information", ->
+    arr = mock.get(channels.ictv.name).toArray()
+    arr.length.should.equal 2
+    arr[0].data.should.equal("somecontent1")
+    arr[1].data.should.equal("somecontent2")
 
+    channels.ictv.remove id1
+    arr = mock.get(channels.ictv.name).toArray()
+    arr.length.should.equal 1
+    arr[0].data.should.equal("somecontent2")
 
 
 

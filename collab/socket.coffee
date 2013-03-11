@@ -54,6 +54,11 @@ class Batman.Socket extends Batman.Object
     ###
     sends info to the websocket
     ###
-    @socket.send(if typeof obj == 'string' then obj else JSON.stringify(Batman.SocketEvent.fromData(obj)))
+    if typeof obj == 'string'
+      @socket.send(obj)
+    else
+      str = JSON.stringify Batman.SocketEvent.fromData(obj)
+      @socket.send str
+
     #@socket.send(if typeof obj == 'string' then Batman.SocketEvent.FromString(obj) else Batman.SocketEvent.fromData(obj))
 

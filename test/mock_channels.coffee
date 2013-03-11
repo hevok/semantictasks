@@ -29,7 +29,11 @@ class Batman.MockChannels
     @cnn.onmessage = (evt)=>@cnn.last = evt.content
     @ictv.onmessage = (evt)=>@ictv.last = evt.content
 
-  getMock: ->@socket.socket
+  getMock:=>
+    ###
+      returns mock socket
+    ###
+    @socket.socket
 
   cleanLasts: ->
     @def.last = @all.last = @bbc.last = @cnn.last = @ictv.last = ""

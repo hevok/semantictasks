@@ -8,8 +8,9 @@ class Batman.SocketEvent
   Socket Event class is a class that does all conversions and packing of events send by sockets and channels
   ###
 
-  constructor: (@content, @channel, @request = "push", id="")->
-    @id = if id=="" then SocketEvent.genId() else id
+  constructor: (@content, @channel, @request = "push")->
+    unless @content.id? or @content.query then @content.id = SocketEvent.genId()
+    #@id = if id=="" then SocketEvent.genId() else id
 
   @fromEvent: (event)->
     ###
@@ -39,22 +40,19 @@ class Batman.SocketEvent
     data = data.data if data.data?
     channel = if data.channel? then data.channel else "default"
     content = data.content
-
-    ###
     content = if data.content?
       if typeof data.content =="string" then @toJSON(data.content) else data.content
     else data
-    ###
     request = if data.request? then data.request else "push"
-    id = if data.id? then data.id else ""
-    new Batman.SocketEvent(content,channel,request,id)
+    new Batman.SocketEvent(content,channel,request)
 
 
   @fromString: (str)->
     ###
     factory that generate SocketEvent from some string
     ###
-    if typeof str !="string" then throw new Error("not string received be fromString")
+    if typeof str !="string"
+      throw new Error("not string received by fromString but "+JSON.stringify(str))
     data = @toJSON(str)
     return  if data is undefined or typeof(data)=="string" then new Batman.SocketEvent(str,"default","save") else @fromData(data)
 

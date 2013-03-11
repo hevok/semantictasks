@@ -16,6 +16,14 @@ require '../collab/socket.coffee'
 
 describe 'Socket', ->
 
+
+  it 'runs test', ->
+    ###
+    Just a sample test to test if all is working well
+    ###
+    truth = "aging kills"
+    truth.should.equal("aging kills")
+
   it 'should broadcast info to the channels', ->
 
     channels = new Batman.MockChannels()

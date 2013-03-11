@@ -10,11 +10,6 @@ class Chat.MockData extends Batman.Object
   constructor: ->
     @socket = Batman.Socket.getInstance()
     @massenger = @socket.socket
-    mock = @massenger
-    mock.onreceive = (event)->
-      data = Batman.SocketEvent.fromData(event)
-      if(data.request=="save")
-        mock.onmessage(data)
 
 
   showDaniel : 'Show this code to Daniel'
@@ -54,7 +49,7 @@ class Chat.MockData extends Batman.Object
       user: "Robot"
     switch num
       when 1
-        @massenger.send
+        @massenger.onmessage
           data:
             content:
               text:"Hi, guys! Look at my code!"
