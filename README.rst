@@ -49,7 +49,7 @@ Setting up SemanticTasks
 
 4. Prepare Environment:
 
-   We also need few other tools. Mocha ( http://visionmedia.github.com/mocha/ ) and Chai ( http://chaijs.com/ ) for testing::
+   We also need few other tools. Mocha ( http://mochajs.org/ ) and Chai ( http://chaijs.com/ ) for testing::
 
 	$ sudo npm install -g mocha
 
